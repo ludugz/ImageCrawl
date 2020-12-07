@@ -1,6 +1,5 @@
 package com.example.imagecrawler.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +22,9 @@ class ImageAdapter : RecyclerView.Adapter<ImageViewHolder>() {
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val photo = data?.photos?.photo?.get(position)
-        loadImage(holder.itemView,convertUrl(photo!!.server, photo.id, photo.secret),holder.itemView.image_view_item)
+        photo?.let {
+            loadImage(holder.itemView,convertUrl(photo.server, photo.id, photo.secret),holder.itemView.image_view_item)
+        }
     }
 
     override fun getItemCount(): Int {

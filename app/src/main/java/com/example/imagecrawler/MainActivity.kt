@@ -1,7 +1,11 @@
 package com.example.imagecrawler
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.imagecrawler.adapter.ImageAdapter
@@ -21,13 +25,37 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "tntan"
         const val KEY = "e17dba05850668400dc483a1f8dc5fc5"
+        const val PER_PAGE = "30"
+        const val THRESH_HOLD_AUTO_SUGGESTION = 1
+        val countries =
+            listOf("Japan", "German", "Korea", "Vietnam", "China", "Indonesia", "India", "Mexico")
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        currentFocus?.let {
+            val imm: InputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setUpAutoCompleteText()
         setUpBtnClick()
         setUpRecyclerView()
+    }
+
+    private fun setUpAutoCompleteText() {
+        auto_text_view_search.setAdapter(
+            ArrayAdapter(
+                this, android.R.layout.simple_list_item_1,
+                countries
+            )
+        )
+        auto_text_view_search.threshold = THRESH_HOLD_AUTO_SUGGESTION
     }
 
 
@@ -38,7 +66,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpRecyclerView() {
-        // Set Up Adapter
         recycler_view.apply {
             adapter = imgAdapter
             layoutManager = GridLayoutManager(context, 2)
@@ -46,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchData(searchText: String) {
-        api.getImage(KEY, searchText)
+        api.getImage(KEY, searchText, PER_PAGE)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { _ ->
