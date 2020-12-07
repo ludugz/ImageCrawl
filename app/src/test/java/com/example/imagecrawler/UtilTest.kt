@@ -32,6 +32,6 @@ class UtilTest {
     @Test
     fun test_03() {
         randomView.hide()
-        Truth.assertThat(randomView.visibility).isEqualTo(View.GONE)
+        Truth.assertThat(randomView.visibility).isEqualTo(View.INVISIBLE)
     }
 }

@@ -13,6 +13,7 @@ import com.example.imagecrawler.model.FlickerImage
 import com.example.imagecrawler.network.APIService
 import com.example.imagecrawler.network.RetrofitClient
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val retrofit = RetrofitClient.client
     private val api = retrofit.create(APIService::class.java)
     private val imgAdapter = ImageAdapter()
+    private lateinit var compositeDisposable : CompositeDisposable
 
     companion object {
         const val TAG = "STYLER TEST"
@@ -73,28 +75,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchData(searchText: String) {
-        api.getImage(KEY, searchText, PER_PAGE)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnError { _ ->
-                Log.i(TAG, "fetchData: doOnError ")
-            }
-            .subscribe(object : DisposableObserver<FlickerImage>() {
-                override fun onNext(response: FlickerImage?) {
-                    Log.i(TAG, "fecthData onNext: ${response!!}")
-                    recycler_view.show()
-                    imgAdapter.setData(response)
-                    imgAdapter.notifyDataSetChanged()
+        compositeDisposable.add(
+            api.getImage(KEY, searchText, PER_PAGE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError { _ ->
+                    Log.i(TAG, "fetchData: doOnError ")
                 }
+                .subscribeWith(object : DisposableObserver<FlickerImage>() {
+                    override fun onNext(response: FlickerImage?) {
+                        Log.i(TAG, "fecthData onNext: ${response!!}")
+                        recycler_view.show()
+                        imgAdapter.setData(response)
+                        imgAdapter.notifyDataSetChanged()
+                    }
 
-                override fun onError(e: Throwable?) {
-                    Log.i(TAG, "fecthData onError: ")
-                    recycler_view.hide()
-                }
+                    override fun onError(e: Throwable?) {
+                        Log.i(TAG, "fecthData onError: ")
+                        recycler_view.hide()
+                    }
 
-                override fun onComplete() {
-                    Log.i(TAG, "fetchData onComplete: ")
-                }
-            })
+                    override fun onComplete() {
+                        Log.i(TAG, "fetchData onComplete: ")
+                    }
+                })
+        )
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

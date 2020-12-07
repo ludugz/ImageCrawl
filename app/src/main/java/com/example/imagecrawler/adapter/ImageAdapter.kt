@@ -9,7 +9,7 @@ import com.example.imagecrawler.loadImage
 import com.example.imagecrawler.model.FlickerImage
 import kotlinx.android.synthetic.main.recycler_view_item.view.*
 
-class ImageAdapter : RecyclerView.Adapter<ImageViewHolder>() {
+class ImageAdapter() : RecyclerView.Adapter<ImageViewHolder>() {
     private var data : FlickerImage? = null
     fun setData(image : FlickerImage) {
         data = image
