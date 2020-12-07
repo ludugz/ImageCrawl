@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val imgAdapter = ImageAdapter()
 
     companion object {
-        const val TAG = "tntan"
+        const val TAG = "STYLER TEST"
         const val KEY = "e17dba05850668400dc483a1f8dc5fc5"
         const val PER_PAGE = "30"
         const val THRESH_HOLD_AUTO_SUGGESTION = 1
