@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface APIService {
+interface FlickerApiService {
     @GET("?method=flickr.photos.search&format=json&nojsoncallback=1")
     fun getImage(
         @Query("api_key") key: String,

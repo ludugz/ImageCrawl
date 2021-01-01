@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.imagecrawler.adapter.ImageAdapter
 import com.example.imagecrawler.model.FlickerImage
-import com.example.imagecrawler.network.APIService
-import com.example.imagecrawler.network.RetrofitClient
+import com.example.imagecrawler.network.FlickerApiService
+import com.example.imagecrawler.network.RetrofitFlickerClient
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableObserver
@@ -19,10 +19,10 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val retrofit = RetrofitClient.client
-    private val api = retrofit.create(APIService::class.java)
+    private val retrofit = RetrofitFlickerClient.client
+    private val flickerApi = retrofit.create(FlickerApiService::class.java)
     private val imgAdapter = ImageAdapter()
-    private lateinit var compositeDisposable : CompositeDisposable
+    private lateinit var compositeDisposable: CompositeDisposable
 
     companion object {
         const val TAG = "STYLER TEST"
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchData(searchText: String) {
         compositeDisposable.add(
-            api.getImage(KEY, searchText, PER_PAGE)
+            flickerApi.getImage(KEY, searchText, PER_PAGE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError { _ ->

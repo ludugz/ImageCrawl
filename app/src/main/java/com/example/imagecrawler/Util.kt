@@ -4,9 +4,8 @@ import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.example.imagecrawler.network.RetrofitClient
 
-
+const val BASE_STATIC_URL = "https://live.staticflickr.com/"
 fun loadImage(view : View, url: String, imgView : ImageView) {
     Glide.with(view)
         .load(url)
@@ -17,7 +16,7 @@ fun loadImage(view : View, url: String, imgView : ImageView) {
 }
 
 fun convertUrl(serverId: String,id: String, secret: String) : String {
-    return RetrofitClient.BASE_STATIC_URL + serverId + "/" + id + "_" + secret + ".jpg"
+    return BASE_STATIC_URL + serverId + "/" + id + "_" + secret + ".jpg"
 }
 
 fun View.show() {
